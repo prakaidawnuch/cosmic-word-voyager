@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cosmic Word Voyager</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ok:#2ee59d;--bad:#ff5d73;--gold:#ffd23f;--cy:#4cc9f0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#222a85,#070b24 70%);color:#fff;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 80px,#fff,transparent),radial-gradient(2px 2px at 150px 20px,#ffd,transparent);background-size:170px 110px;animation:tw 3s infinite alternate;opacity:.7}
+@keyframes tw{to{opacity:.25}}
+#app{position:relative;max-width:760px;margin:0 auto;padding:12px}
+#hud{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#ffffff14;border:1px solid #ffffff30;border-radius:16px;padding:8px 14px;font-weight:700;min-height:46px}
+.bar{width:110px;height:12px;background:#0006;border-radius:9px;overflow:hidden;display:inline-block;vertical-align:middle}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--ok));transition:width .5s}
+#say{display:flex;gap:10px;align-items:center;margin:12px 0}
+.mascot{font-size:54px;animation:fl 3s ease-in-out infinite;filter:drop-shadow(0 6px 8px #0008)}
+.bubble{background:#fff;color:#1b1f4b;padding:10px 14px;border-radius:16px;font-size:16px;font-weight:600}
+@keyframes fl{50%{transform:translateY(-10px) rotate(4deg)}}
+#stage{background:#131a4acc;border:1px solid #ffffff30;border-radius:22px;padding:18px;text-align:center;min-height:330px}
+h1{font-size:clamp(28px,6vw,44px);margin:6px 0;background:linear-gradient(90deg,var(--cy),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.clue{font-size:19px;line-height:1.5;margin:10px 0}
+.big{font-size:70px}
+.btn,.opt{font:inherit;font-size:18px;font-weight:700;color:#fff;border:0;border-radius:14px;padding:12px 20px;margin:6px;cursor:pointer;background:linear-gradient(#5b6cff,#3a44c9);box-shadow:0 5px 0 #1d2478;transition:transform .1s}
+.btn:active,.opt:active{transform:translateY(3px);box-shadow:0 2px 0 #1d2478}
+.btn.go{background:linear-gradient(#ffb300,#ff7a00);box-shadow:0 5px 0 #a34a00}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt.off{background:#555;box-shadow:none;opacity:.45;pointer-events:none;text-decoration:line-through}
+.opt.red{background:var(--bad);box-shadow:none;pointer-events:none;animation:sh .4s}
+.opt.hide{visibility:hidden}
+.radar{width:130px;height:130px;margin:0 auto;border-radius:50%;border:3px solid var(--ok);background:repeating-radial-gradient(#0a3b2e 0 14px,#0f5a45 15px 16px);position:relative;display:grid;place-items:center;font-size:42px;overflow:hidden}
+.radar:after{content:"";position:absolute;inset:0;background:conic-gradient(#2ee59d99,transparent 25%);animation:rot 2s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.planet{width:130px;height:130px;border-radius:50%;margin:0 auto;box-shadow:inset -22px -16px 34px #000a,0 0 34px #fff3;animation:fl 3s ease-in-out infinite}
+.earth{background:radial-gradient(circle at 32% 30%,#7fe0ff,#1b6fe0 45%,#0a3a8a)}
+.mars{background:radial-gradient(circle at 32% 30%,#ffb08a,#d9532b 50%,#7a2410)}
+.venus{background:radial-gradient(circle at 32% 30%,#fff2b0,#e8a93a 50%,#8a5a12)}
+.target{color:var(--ok);font-size:28px;font-weight:800;margin-top:8px;animation:pop .5s}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.sent{font-size:21px;line-height:1.7;margin:14px 0}
+.blank{display:inline-block;min-width:110px;border-bottom:3px dashed var(--gold);color:var(--gold)}
+mark{background:var(--gold);color:#222;border-radius:5px;padding:0 4px}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:10px 0;min-height:56px}
+.slot,.tile{min-width:46px;height:50px;padding:0 10px;border-radius:12px;display:grid;place-items:center;font-size:22px;font-weight:800;font-family:inherit;border:0}
+.slot{background:#0007;border:2px dashed #ffffff55;color:#fff}
+.slot.on{border-style:solid;border-color:var(--cy)}
+.slot.lk{border-color:var(--gold);color:var(--gold)}
+.tile{background:linear-gradient(#ff8fd0,#c43fa0);color:#fff;cursor:pointer;box-shadow:0 4px 0 #6d1b58;animation:pop .3s}
+.glow .slot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 18px var(--gold);animation:pop .4s}
+.shake{animation:sh .4s}
+.warp{height:150px;background:repeating-linear-gradient(90deg,transparent 0 12px,#9fe 13px 14px);animation:wp .6s linear infinite;border-radius:14px;opacity:.7}
+@keyframes wp{to{background-position:-26px 0}}
+.small{font-size:14px;opacity:.85}
+</style></head><body>
+<div class="stars"></div>
+<div id="app">
+ <div id="hud"></div>
+ <div id="say"><div class="mascot">👽</div><div class="bubble" id="msg"></div></div>
+ <div id="stage"></div>
+</div>
+<script>
+const W=["Earth","Temperature","Gravity","Mars","Venus","Space station","Oxygen"];
+const M1=[["Earth","Our home planet. It has water and life."],["Temperature","How hot or cold something is. We use a thermometer."],["Gravity","The force that pulls things down to the ground."],["Mars","The red planet. Rovers drive on it."],["Venus","The hottest planet. It is very hot and cloudy."],["Space station","A big home in space where astronauts live and work."],["Oxygen","The gas we breathe. We need it to live."]];
+const M2=[["Astronauts need ___ to breathe in the station.","Oxygen",["breathe"]],["Without ___, we float like balloons!","Gravity",["float"]],["It is 460°C on Venus. The ___ is very high.","Temperature",["460°C","high"]],["We live on ___. It is the third planet from the Sun.","Earth",["third","live"]],["___ is the red planet.","Mars",["red"]],["___ is the hottest planet in the solar system.","Venus",["hottest"]],["Astronauts live and work on the ___ above Earth.","Space station",["live","work","above"]]];
+const M3B=["Astronauts live on the space station","Gravity keeps us on Earth","Mars is called the red planet"];
+const $=s=>document.querySelector(s),sh=a=>[...a].sort(()=>Math.random()-.5);
+let S,tmr,T=0,tfn;
+const V={Earth:'<div class="planet earth"></div>',Mars:'<div class="planet mars"></div>',Venus:'<div class="planet venus"></div>',Temperature:'<div class="big">🌡️</div>',Gravity:'<div class="big">🍎⬇️</div>',"Space station":'<div class="big">🛰️</div>',Oxygen:'<div class="big">🫧 O₂</div>'};
+function beep(f,d=.15){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.value=.07;o.start();o.stop(a.currentTime+d)}catch(e){}}
+function say(t){$('#msg').innerHTML=t}
+function stage(h){$('#stage').innerHTML=h}
+function hud(){$('#hud').innerHTML=`<span>🛡️ ${'🛡️'.repeat(S.shield)}${'💨'.repeat(3-S.shield)}</span><span>⚡ <span class="bar"><i style="width:${S.energy}%"></i></span> ${S.energy}%</span><span>⭐ ${S.score}</span><span>⏱️ <b id="tm">${T||'--'}</b></span>`}
+function stopT(){clearInterval(tmr);T=0}
+function startT(sec,retry){stopT();T=sec;tfn=retry;hud();tmr=setInterval(()=>{T--;const e=$('#tm');if(e)e.textContent=T;if(T<=0){stopT();lose("เวลาหมดแล้ว แต่ไม่เป็นไรนะ!")}},1000)}
+function lose(why){stopT();hud();beep(180,.5);say("ไม่เป็นไรเลย! นักบินอวกาศเก่ง ๆ ก็ต้องลองหลายรอบ 💪");stage(`<div class="big">🛠️</div><h2>${why}</h2><p class="clue">ระบบฉุกเฉินพร้อมแล้ว กดรีบูตแล้วลองใหม่ได้เลย คราวนี้เธอจะทำได้ดีขึ้นแน่นอน!</p><button class="btn go" id="rb">🔄 Emergency Reboot</button>`);$('#rb').onclick=tfn}
+function intro(n,title,goal,fn){stopT();hud();stage(`<div class="big">${["🛡️","🛰️","🧩"][n-1]}</div><h2>Mission ${n}: ${title}</h2><p class="clue">${goal}</p><button class="btn go" id="st">🚀 Start Mission ${n}</button>`);$('#st').onclick=()=>go(n,fn)}
+function go(n,fn){if(S.b[n]===undefined)S.b[n]={s:S.score,e:S.energy,h:S.shield};else{S.score=S.b[n].s;S.energy=S.b[n].e;S.shield=S.b[n].h}fn()}
+function cheer(){return sh(["เก่งมาก! 🌟","สุดยอด! ไปต่อกัน 🚀","ถูกต้อง! เธอคือนักบินตัวจริง 👨‍🚀","Great job! 🎉"])[0]}
+function oops(){return sh(["ลองอีกนิดนะ เกือบแล้ว! 💪","ไม่เป็นไร พลาดได้ เรียนรู้ไปด้วยกัน 😊","Try again! เธอทำได้ ✨"])[0]}
+
+function start(){S={shield:3,energy:0,score:0,boost:0,b:{}};stopT();hud();say("สวัสดี! ฉันชื่อ Cosmo 👽 ยานเราโดนพายุสุริยะ ช่วยกันซ่อมนะ!");
+stage(`<h1>Cosmic Word Voyager</h1><div class="big">🧑‍🚀 🪐 🛰️</div><p class="clue">พายุรังสีสุริยะทำให้คอมพิวเตอร์ยานพัง!<br>ผ่าน 3 ภารกิจ เพื่อซ่อมระบบและพากันกลับโลกอย่างปลอดภัย</p><button class="btn go" id="s0">🚀 เริ่มภารกิจ</button>`);
+$('#s0').onclick=()=>intro(1,"Planetary Radar","อ่านข้อมูลที่เรดาร์ส่งมา แล้วเลือกคำศัพท์ที่ถูกต้อง ถูกจะได้พลังงาน ผิดเกราะจะลดลง 1 หลอด",m1)}
+
+function m1(){S.shield=3;let q=sh(M1),i=0;startT(150,()=>go(1,m1));say("เรดาร์กำลังสแกน... อ่านเบาะแสแล้วเลือกคำตอบ!");
+function nx(){if(i>=q.length){stopT();say("Mission 1 สำเร็จ! 🎉");return intro(2,"Life Support Systems","อ่านบันทึกเตือนภัย แล้วเลือกคำที่เหมาะใส่ในช่องว่าง ตอบถูกได้ O2 Booster ไว้ใช้ภารกิจสุดท้าย!",m2)}
+const[a,c]=q[i];const o=sh([a,...sh(W.filter(w=>w!==a)).slice(0,3)]);hud();
+stage(`<div class="radar">📡</div><p class="clue">🔎 ${c}</p><div class="opts">${o.map(x=>`<button class="opt">${x}</button>`).join('')}</div><p class="small">ข้อ ${i+1}/${q.length}</p>`);
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(b.textContent===a){beep(660);S.energy=Math.min(100,S.energy+20);S.score+=100;hud();say(cheer());stage(`${V[a]}<div class="target">🎯 Target Acquired!</div><p class="clue">${a} +100 ⭐ / พลังงาน +20%</p>`);i++;setTimeout(nx,1500)}
+else{beep(200,.3);S.shield--;b.classList.add('red');const rest=[...document.querySelectorAll('.opt')].filter(x=>x.textContent!==a&&!x.classList.contains('red'));if(rest.length>1)rest[0].classList.add('off');hud();say(oops()+" (ระบบตัดตัวเลือกผิดให้ 1 ข้อ)");if(S.shield<=0)lose("เกราะยานหมด! ต้องเริ่ม Mission 1 ใหม่")}})}
+nx()}
+
+function m2(){let q=sh(M2),i=0;startT(120,()=>go(2,m2));say("ระบบยังชีพขัดข้อง! เลือกคำที่ถูกใส่ในช่องว่าง");
+function nx(){if(i>=q.length){stopT();say("ระบบยังชีพกลับมาแล้ว! 🎉");return intro(3,"The Data Unscramble","จัดเรียงตัวอักษรและประโยคที่กระจัดกระจาย เพื่อจุดเครื่องยนต์ Hyperdrive กลับบ้าน!",m3)}
+const[s,a,k]=q[i];let hl=false;hud();
+const draw=()=>{let t=s.replace("___",'<span class="blank">&nbsp;?&nbsp;</span>');if(hl)k.forEach(w=>t=t.replace(w,`<mark>${w}</mark>`));return t};
+stage(`<p class="sent" id="sn">🚨 ${draw()}</p><div class="opts" id="os">${sh(W).slice(0,0).concat(W).map(x=>`<button class="opt">${x}</button>`).join('')}</div><p class="small">ข้อ ${i+1}/${q.length}</p>`);
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(b.textContent===a){beep(700);S.score+=150;S.boost++;hud();say(cheer()+" ได้ O2 Booster! 💨");stage(`<div class="big">🟢</div><div class="target">System Normal</div><p class="clue">${s.replace("___","<b>"+a+"</b>")}<br>+150 ⭐ / O2 Booster x${S.boost}</p>`);i++;setTimeout(nx,1700)}
+else{beep(200,.3);b.classList.add('red');T=Math.max(1,T-10);hl=true;$('#sn').innerHTML="🚨 "+draw();say(oops()+" (เวลาลด 10 วิ — ดูคำที่ไฮไลต์ช่วยนะ)")}})}
+nx()}
+
+function puzzle(box,tok,o){let ans=Array(tok.length).fill(null),pool=sh(tok.map(t=>({t}))),lock=false,done=false;
+function lockFirst(){if(lock)return;if(ans[0]&&ans[0].t!==tok[0]){pool.push(ans[0]);ans[0]=null}if(!ans[0]){const k=pool.findIndex(p=>p.t===tok[0]);ans[0]=pool.splice(k,1)[0]}lock=true;draw()}
+function draw(){box.innerHTML=`<div class="row ${done?'glow':''}">${ans.map((a,i)=>`<button class="slot ${a?'on':''} ${lock&&i==0?'lk':''}" data-s="${i}">${a?a.t:''}</button>`).join('')}</div><div class="row">${pool.map((p,i)=>`<button class="tile" data-p="${i}">${p.t}</button>`).join('')}</div>`;
+box.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{if(done)return;const k=ans.indexOf(null);if(k<0)return;ans[k]=pool.splice(+b.dataset.p,1)[0];beep(500,.05);check()});
+box.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{const k=+b.dataset.s;if(done||!ans[k]||(lock&&k==0))return;pool.push(ans[k]);ans[k]=null;draw()})}
+function check(){if(ans.includes(null))return draw();if(ans.every((a,i)=>a.t===tok[i])){done=true;draw();return o.right()}
+if(o.reshuffle){for(let i=lock?1:0;i<ans.length;i++){pool.push(ans[i]);ans[i]=null}pool=sh(pool)}else{ans.forEach((a,i)=>{if(a.t!==tok[i]){pool.push(a);ans[i]=null}})}
+draw();box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),400);o.wrong();lockFirst()}
+draw();return{lockFirst}}
+
+function m3(){startT(240,()=>go(3,m3));let ws=sh(W),i=0;say("ถอดรหัสไฟล์ให้ครบ แล้ว Hyperdrive จะติด!");partA();
+function partA(){if(i>=ws.length){i=0;return partB(sh(M3B))}
+const w=ws[i],key=w.replace(" ","").toUpperCase(),clue=M1.find(x=>x[0]===w)[1];hud();
+stage(`<h3>🔹 Part A: เรียงตัวอักษร (${i+1}/${ws.length})</h3><p class="clue">💡 ${clue}${w.includes(" ")?" (2 คำ)":""}</p><div id="bx"></div><button class="btn" id="bo">💨 ใช้ O2 Booster (${S.boost})</button>`);
+const p=puzzle($('#bx'),[...key],{reshuffle:true,right(){beep(800);S.energy=Math.min(100,S.energy+10);hud();say(cheer()+" "+w+" ✨ พลังงาน +10%");i++;setTimeout(partA,1400)},wrong(){beep(200,.3);say(oops()+" (ล็อกตัวอักษรแรกให้แล้ว)")}});
+$('#bo').onclick=()=>{if(S.boost>0){S.boost--;p.lockFirst();$('#bo').textContent=`💨 ใช้ O2 Booster (${S.boost})`;say("O2 Booster ช่วยเปิดตัวอักษรแรกให้แล้ว!")}else say("O2 Booster หมดแล้ว ลองเองได้เลย!")}}
+function partB(q){if(i>=q.length)return win();
+const t=q[i].split(" ");hud();stage(`<h3>🔹 Part B: เรียงประโยค (${i+1}/${q.length})</h3><p class="clue">แตะคำเพื่อเรียงเป็นประโยคที่ถูกต้อง</p><div id="bx"></div>`);
+const p=puzzle($('#bx'),t,{reshuffle:false,right(){beep(800);say(cheer());i++;setTimeout(()=>partB(q),1400)},wrong(){beep(150,.3);S.score=Math.max(0,S.score-50);hud();say(oops()+" (คำแรกถูกล็อกไว้ให้แล้ว)")}})}
+}
+function win(){stopT();hud();beep(880,.3);say("เราทำได้แล้ว! ขอบคุณที่ช่วยกันนะ 🎉");
+stage(`<div class="warp"></div><div class="big">🌍🧑‍🚀🎉</div><h2>Hyperdrive 100% — ยานกลับสู่โลกแล้ว!</h2><p class="clue">ยศของเธอคือ <b style="color:var(--gold)">🏅 Cosmic Master</b><br>คะแนน ${S.score} ⭐ | เกราะเหลือ ${S.shield} 🛡️</p><p class="small">${W.join(" • ")}</p><button class="btn go" id="pa">🔄 เล่นอีกครั้ง</button>`);$('#pa').onclick=start}
+start();
+</script></body></html>
