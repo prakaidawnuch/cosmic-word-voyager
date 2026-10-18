@@ -65,12 +65,33 @@ mark{background:var(--gold);color:#222;border-radius:5px;padding:0 4px}
 .mon .an.r{left:auto;right:24%;transform:rotate(16deg)}
 .mon .an:before{content:"";position:absolute;top:-8px;left:-5px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--gold));box-shadow:0 0 10px var(--gold)}
 .mon .hat{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:30px}
-.mon.sad .mo{border-radius:30px 30px 0 0;box-shadow:inset 0 5px 0 #ff7a9a;transform:translateY(5px)}
-.mon.sad{animation:sh .5s 2}
 .mon.hap{animation:jmp .5s ease-in-out infinite}
 .mon.hap .mo{height:22px}
 @keyframes jmp{50%{transform:perspective(420px) rotateY(15deg) translateY(-22px)}}
 #tm.urgent{color:var(--bad);animation:pop .5s infinite}
+.mon .ey{overflow:hidden}
+.mon .tear{position:absolute;top:46%;width:8px;height:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#8fd8ff;opacity:0;z-index:2}
+.mon .tear.l{left:24%}.mon .tear.r2{right:24%}
+.mon .cloud{position:absolute;top:-46px;left:50%;margin-left:-20px;font-size:38px;opacity:0;transition:opacity .3s}
+.mon.sad{animation:sadm 2s ease-in-out forwards}
+@keyframes sadm{0%{transform:perspective(420px) scale(1)}15%{transform:perspective(420px) scale(1.06,.86) translateY(10px)}100%{transform:perspective(420px) scale(1,.92) translateY(6px)}}
+.mon.sad .bd{filter:saturate(.45) brightness(.9)}
+.mon.sad .ey u{top:17px}
+.mon.sad .ey:before{content:"";position:absolute;left:-3px;right:-3px;top:-3px;height:45%;background:var(--c)}
+.mon.sad .ey:first-child:before{transform:rotate(-22deg)}
+.mon.sad .ey:nth-child(2):before{transform:rotate(22deg)}
+.mon.sad .mo{height:12px;border-radius:30px 30px 0 0;box-shadow:inset 0 5px 0 #ff7a9a;transform:translateY(7px);animation:qv .3s 5}
+@keyframes qv{50%{transform:translateY(7px) scaleX(.82)}}
+.mon.sad .tear{animation:td 1s ease-in 2}
+.mon.sad .cloud{opacity:1}
+@keyframes td{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(36px)}}
+#stage{position:relative;overflow:hidden}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.pc{background:#ffffff14;border:3px solid transparent;border-radius:18px;padding:22px 4px 8px;cursor:pointer;font:inherit;font-size:17px;color:#fff;transition:.15s}
+.pc.sel{border-color:var(--gold);background:#ffd23f26;transform:scale(1.05)}
+.badge{font-size:76px;animation:pop .6s,fl 3s ease-in-out infinite;filter:drop-shadow(0 0 18px var(--gold))}
+.conf i{position:absolute;top:-20px;width:8px;height:14px;border-radius:2px;animation:cf 2.6s linear infinite}
+@keyframes cf{to{transform:translateY(420px) rotate(540deg)}}
 </style></head><body>
 <div class="stars"></div>
 <div id="app">
@@ -93,9 +114,15 @@ function talk(t,p){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtter
 function yes(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.07,.18));tone(1568,.4,.4,"sine",.07);talk(sh(["Yay!","Awesome!","Amazing!","Wow, great job!"])[0],1.6)}
 function no(){tone(400,0,.45,"sawtooth",.06,120);tone(300,.25,.4,"square",.04,90);talk(sh(["Oh no! Try again!","Whoops!","Uh-oh!"])[0],1.3)}
 function fanfare(){[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone(f,i*.12,.25));talk("Mission complete! You are a Cosmic Master!",1.4)}
-let mc=0;
-function mon(c=""){const P=[["#7bff6b","🎩"],["#ff8fd0","👑"],["#6bd6ff","🧢"],["#ffd23f","🎀"],["#b58cff","⛑️"],["#ff9a5c","🪖"]],[col,h]=P[mc++%6];return `<div class="mon ${c}" style="--c:${col}"><i class="an"></i><i class="an r"></i><div class="bd"><b class="ey"><u></u></b><b class="ey"><u></u></b><s class="mo"></s></div><span class="hat">${h}</span></div>`}
-function sad(){const m=document.querySelector(".mon");if(m){m.classList.add("sad");setTimeout(()=>m.classList.remove("sad"),1000)}}
+const CH=[["#7bff6b","🎩","Zippy"],["#ff8fd0","👑","Pinky"],["#6bd6ff","🧢","Bluey"],["#ffd23f","🎀","Goldy"],["#b58cff","⛑️","Violet"],["#ff9a5c","🪖","Orangey"]];
+function mon(c="",k){const[col,h]=CH[k===undefined?(S?S.char:0):k];return `<div class="mon ${c}" style="--c:${col}"><i class="an"></i><i class="an r"></i><div class="bd"><b class="ey"><u></u></b><b class="ey"><u></u></b><s class="mo"></s></div><span class="hat">${h}</span><i class="tear l"></i><i class="tear r2"></i><span class="cloud">☁️</span></div>`}
+function sad(){const m=document.querySelector(".mon");if(m){m.classList.remove("hap");m.classList.add("sad");setTimeout(()=>{m.classList.remove("sad");m.classList.add("hap");setTimeout(()=>m.classList.remove("hap"),900)},2000)}}
+const RW=[["📡","Radar Badge","เรดาร์ซ่อมสำเร็จ! เกราะยานชาร์จเต็ม 🛡️🛡️🛡️"],["🫧","Life Support Badge","ระบบยังชีพกลับมาแล้ว! ได้ O2 Booster เพิ่ม +2 💨"]];
+function reward(n,next){stopT();const r=RW[n-1];S.badges.push(r[0]);if(n==1)S.shield=3;else S.boost+=2;S.score+=200;hud();yes();say("ภารกิจสำเร็จ! รับรางวัลได้เลย 🎁");
+stage(`<div class="conf">${Array.from({length:18},()=>`<i style="left:${Math.random()*100}%;background:hsl(${Math.random()*360},90%,60%);animation-delay:${Math.random()*2}s"></i>`).join("")}</div><div class="chrow">${mon("hap")}<div class="badge">${r[0]}</div></div><h2>🎁 Mission ${n} Complete!</h2><p class="clue"><b style="color:var(--gold)">${r[1]}</b><br>${r[2]}<br>โบนัสภารกิจ +200 ⭐</p><button class="btn go" id="nx">ไปต่อ ▶</button>`);$('#nx').onclick=next}
+function pick(next){stopT();hud();say(S.picked?CH[S.char][2]+" พร้อมออกเดินทางแล้ว! 🚀":"เลือกนักบินคู่ใจของเธอเลย! 👇");
+stage(`<h2>เลือกตัวละครของเธอ</h2><div class="pick">${CH.map((c,i)=>`<button class="pc ${i==S.char?"sel":""}" data-i="${i}">${mon(i==S.char?"hap":"",i)}<b>${c[2]}</b></button>`).join("")}</div><button class="btn go" id="ok">✅ ใช้ ${CH[S.char][2]} เลย!</button>`);
+document.querySelectorAll(".pc").forEach(b=>b.onclick=()=>{S.char=+b.dataset.i;S.picked=1;beep(700,.1);pick(next)});$("#ok").onclick=next}
 function say(t){$('#msg').innerHTML=t}
 function stage(h){$('#stage').innerHTML=h}
 function hud(){$('#hud').innerHTML=`<span>🛡️ ${'🛡️'.repeat(S.shield)}${'💨'.repeat(3-S.shield)}</span><span>⚡ <span class="bar"><i style="width:${S.energy}%"></i></span> ${S.energy}%</span><span>⭐ ${S.score}</span><span>⏱️ <b id="tm">${T||'--'}</b></span>`}
@@ -107,12 +134,12 @@ function go(n,fn){if(S.b[n]===undefined)S.b[n]={s:S.score,e:S.energy,h:S.shield}
 function cheer(){return sh(["เก่งมาก! 🌟","สุดยอด! ไปต่อกัน 🚀","ถูกต้อง! เธอคือนักบินตัวจริง 👨‍🚀","Great job! 🎉"])[0]}
 function oops(){return sh(["ลองอีกนิดนะ เกือบแล้ว! 💪","ไม่เป็นไร พลาดได้ เรียนรู้ไปด้วยกัน 😊","Try again! เธอทำได้ ✨"])[0]}
 
-function start(){S={shield:3,energy:0,score:0,boost:0,b:{}};stopT();hud();say("สวัสดี! ฉันชื่อ Cosmo 👽 ยานเราโดนพายุสุริยะ ช่วยกันซ่อมนะ!");
+function start(){S={shield:3,energy:0,score:0,boost:0,b:{},badges:[],char:0,picked:0};stopT();hud();say("สวัสดี! ฉันชื่อ Cosmo 👽 ยานเราโดนพายุสุริยะ ช่วยกันซ่อมนะ!");
 stage(`<h1>Cosmic Word Voyager</h1><div class="big">🧑‍🚀 🪐 🛰️</div><p class="clue">พายุรังสีสุริยะทำให้คอมพิวเตอร์ยานพัง!<br>ผ่าน 3 ภารกิจ เพื่อซ่อมระบบและพากันกลับโลกอย่างปลอดภัย</p><button class="btn go" id="s0">🚀 เริ่มภารกิจ</button>`);
-$('#s0').onclick=()=>intro(1,"Planetary Radar","อ่านข้อมูลที่เรดาร์ส่งมา แล้วเลือกคำศัพท์ที่ถูกต้อง ถูกจะได้พลังงาน ผิดเกราะจะลดลง 1 หลอด",m1)}
+$('#s0').onclick=()=>pick(()=>intro(1,"Planetary Radar","อ่านข้อมูลที่เรดาร์ส่งมา แล้วเลือกคำศัพท์ที่ถูกต้อง ถูกจะได้พลังงาน ผิดเกราะจะลดลง 1 หลอด",m1))}
 
 function m1(){S.shield=3;let q=sh(M1),i=0;say("เรดาร์กำลังสแกน... อ่านเบาะแสแล้วเลือกคำตอบ!");
-function nx(){if(i>=q.length){stopT();say("Mission 1 สำเร็จ! 🎉");return intro(2,"Life Support Systems","อ่านบันทึกเตือนภัย แล้วเลือกคำที่เหมาะใส่ในช่องว่าง ตอบถูกได้ O2 Booster ไว้ใช้ภารกิจสุดท้าย!",m2)}
+function nx(){if(i>=q.length){stopT();return reward(1,()=>intro(2,"Life Support Systems","อ่านบันทึกเตือนภัย แล้วเลือกคำที่เหมาะใส่ในช่องว่าง ตอบถูกได้ O2 Booster ไว้ใช้ภารกิจสุดท้าย!",m2))}
 const[a,c]=q[i];startT(30,()=>go(1,m1));const o=sh([a,...sh(W.filter(w=>w!==a)).slice(0,3)]);hud();
 stage(`<div class="chrow">${mon()}<div class="radar">📡</div></div><p class="clue">🔎 ${c}</p><div class="opts">${o.map(x=>`<button class="opt">${x}</button>`).join('')}</div><p class="small">ข้อ ${i+1}/${q.length}</p>`);
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(b.textContent===a){yes();stopT();S.energy=Math.min(100,S.energy+20);S.score+=100;hud();say(cheer());stage(`<div class="chrow">${mon("hap")}${V[a]}</div><div class="target">🎯 Target Acquired!</div><p class="clue">${a} +100 ⭐ / พลังงาน +20%</p>`);i++;setTimeout(nx,1500)}
@@ -120,7 +147,7 @@ else{no();S.shield--;b.classList.add('red');sad();const rest=[...document.queryS
 nx()}
 
 function m2(){let q=sh(M2),i=0;say("ระบบยังชีพขัดข้อง! เลือกคำที่ถูกใส่ในช่องว่าง");
-function nx(){if(i>=q.length){stopT();say("ระบบยังชีพกลับมาแล้ว! 🎉");return intro(3,"The Data Unscramble","จัดเรียงตัวอักษรและประโยคที่กระจัดกระจาย เพื่อจุดเครื่องยนต์ Hyperdrive กลับบ้าน!",m3)}
+function nx(){if(i>=q.length){stopT();return reward(2,()=>intro(3,"The Data Unscramble","จัดเรียงตัวอักษรและประโยคที่กระจัดกระจาย เพื่อจุดเครื่องยนต์ Hyperdrive กลับบ้าน!",m3))}
 const[s,a,k]=q[i];let hl=false;startT(30,()=>go(2,m2));
 const draw=()=>{let t=s.replace("___",'<span class="blank">&nbsp;?&nbsp;</span>');if(hl)k.forEach(w=>t=t.replace(w,`<mark>${w}</mark>`));return t};
 stage(`<div class="chrow">${mon()}</div><p class="sent" id="sn">🚨 ${draw()}</p><div class="opts" id="os">${sh(W).slice(0,0).concat(W).map(x=>`<button class="opt">${x}</button>`).join('')}</div><p class="small">ข้อ ${i+1}/${q.length}</p>`);
@@ -149,6 +176,6 @@ const t=q[i].split(" ");startT(30,()=>go(3,m3));stage(`${mon()}<h3>🔹 Part B: 
 const p=puzzle($('#bx'),t,{reshuffle:false,right(){stopT();yes();say(cheer());i++;setTimeout(()=>partB(q),1400)},wrong(){no();sad();S.score=Math.max(0,S.score-50);hud();say(oops()+" (คำแรกถูกล็อกไว้ให้แล้ว)")}})}
 }
 function win(){stopT();hud();fanfare();say("เราทำได้แล้ว! ขอบคุณที่ช่วยกันนะ 🎉");
-stage(`<div class="warp"></div><div class="chrow">${mon("hap")}${mon("hap")}${mon("hap")}</div><div class="big">🌍🧑‍🚀🎉</div><h2>Hyperdrive 100% — ยานกลับสู่โลกแล้ว!</h2><p class="clue">ยศของเธอคือ <b style="color:var(--gold)">🏅 Cosmic Master</b><br>คะแนน ${S.score} ⭐ | เกราะเหลือ ${S.shield} 🛡️</p><p class="small">${W.join(" • ")}</p><button class="btn go" id="pa">🔄 เล่นอีกครั้ง</button>`);$('#pa').onclick=start}
+stage(`<div class="warp"></div><div class="chrow">${mon("hap")}<div class="badge">🏆</div></div><div class="big">🌍🧑‍🚀🎉</div><h2>Hyperdrive 100% — ยานกลับสู่โลกแล้ว!</h2><p class="clue">ยศของเธอคือ <b style="color:var(--gold)">🏅 Cosmic Master</b><br>คะแนน ${S.score} ⭐ | เกราะเหลือ ${S.shield} 🛡️<br>รางวัลที่ได้: ${S.badges.join(" ")} 🏆</p><p class="small">${W.join(" • ")}</p><button class="btn go" id="pa">🔄 เล่นอีกครั้ง</button>`);$('#pa').onclick=start}
 start();
 </script></body></html>
